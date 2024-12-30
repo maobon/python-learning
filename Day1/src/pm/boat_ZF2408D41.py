@@ -1,4 +1,6 @@
-import random
+# username and password
+CONSTANT_USERNAME = "admin"
+CONSTANT_PASSWORD = "root"
 
 # targets between Sun distance unit AU
 destinations_arr = [
@@ -66,10 +68,33 @@ class Boat:
         return self.ammo
 
 
+def login():
+    username_retry_count = 2
+    passwords_retry_count = 2
+
+    while input("Please input your username:") != CONSTANT_USERNAME and username_retry_count > 0:
+        print("Sorry, please input correct username")
+        username_retry_count -= 1
+
+    if username_retry_count == 0:
+        print("Exit ...")
+        exit(1)
+
+    while input("Please input your password:") != CONSTANT_PASSWORD and passwords_retry_count > 0:
+        print("Sorry, please input correct password")
+        passwords_retry_count -= 1
+
+    if passwords_retry_count == 0:
+        print("Exit ...")
+        exit(1)
+
+    print("Login successfully...")
+
+
 if __name__ == '__main__':
+    login()
 
     boat = Boat(POSITION_INIT, AMMO_INIT, TOTAL_AVAILABLE_DISTANCE, ENGIN_STATUS_INIT)
-
     while True:
 
         print("Select your order\n")
