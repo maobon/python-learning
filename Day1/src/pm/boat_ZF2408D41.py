@@ -12,20 +12,22 @@ destinations_arr = [
 # 1AU = 149600000km
 CONSTANT_KM_ONE_AU = 149600000
 
+
+
 operations = ['go', 'shoot', 'fuel', 'motor', 'exit']
 
 POSITION_INIT = 1
 AMMO_INIT = 100
-FUEL_INIT = 100
+TOTAL_AVAILABLE_DISTANCE = 10_000_000_000
 ENGIN_STATUS_INIT = True
 
 
 class Boat:
 
-    def __init__(self, curr_position_index, ammo, fuel, engin_status):
+    def __init__(self, curr_position_index, ammo, avi_distance, engin_status):
         self.curr_position_index = curr_position_index
         self.ammo = ammo
-        self.fuel = fuel
+        self.avi_distance = avi_distance
         self.engin_status = engin_status
 
     def set_current_position(self, curr_position_index):
@@ -39,17 +41,20 @@ class Boat:
 
         return {
             "target": list(target.keys())[0],
-            "distance": abs(curr_to_sun - target_to_sun),
+            "distance": (abs(curr_to_sun - target_to_sun)) * CONSTANT_KM_ONE_AU,
         }
 
-    def desc_fuel(self) -> int:
-        self.fuel -= random.randint(1, 10)
-        if self.fuel <= 0:
+    # return left fuel percent
+    def consume_fuel(self, distance) -> float:
+        if distance > self.avi_distance:
             self.engin_status = False
-        return self.fuel
+            return -1
+        else:
+            self.avi_distance -= distance
+            return self.avi_distance / TOTAL_AVAILABLE_DISTANCE
 
-    def get_fuel(self) -> int:
-        return self.fuel
+    def get_curr_left_fuel_percent(self) -> str:
+        return str(f"{(self.avi_distance / TOTAL_AVAILABLE_DISTANCE) * 100}%")
 
     def get_engin_status(self) -> bool:
         return self.engin_status
@@ -63,7 +68,7 @@ class Boat:
 
 if __name__ == '__main__':
 
-    boat = Boat(POSITION_INIT, AMMO_INIT, FUEL_INIT, ENGIN_STATUS_INIT)
+    boat = Boat(POSITION_INIT, AMMO_INIT, TOTAL_AVAILABLE_DISTANCE, ENGIN_STATUS_INIT)
 
     print("Select your order\n")
     for i, operation in enumerate(operations):
@@ -80,17 +85,19 @@ if __name__ == '__main__':
                     print(f"{i} -> {list(destination.keys())[0]}")
 
                 des_id = int(input("select your choice: "))
-                xx = boat.set_destination(des_id)
-                print(xx)
-                curr_fuel = boat.desc_fuel()
+                dis = boat.set_destination(des_id)['distance']
+                print(f"distance: {dis}")
 
+                xx = boat.consume_fuel(dis)
 
-                if boat.get_engin_status():
-                    print(f"space ship current fuel:{curr_fuel}\n"
-                          f"already reached {xx['target']}")
-                    boat.set_current_position(des_id)
-                else:
-                    print(f"space ship no fuel left, engine down!")
+                print(f"fuel left: {xx:.2f}")
+
+                # if boat.get_engin_status():
+                #     print(f"space ship current fuel:{curr_fuel}\n"
+                #           f"already reached {xx['target']}")
+                #     boat.set_current_position(des_id)
+                # else:
+                #     print(f"space ship no fuel left, engine down!")
             else:
                 print("no fuel available")
 
