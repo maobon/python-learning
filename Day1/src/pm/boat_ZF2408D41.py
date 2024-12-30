@@ -1,24 +1,46 @@
 import random
 
-destination_arr = ['Earth', 'Moon', 'Mars', 'Jupiter', 'Sun']
+# targets between Sun distance unit AU
+destinations_arr = [
+    {"Sun": 0.0},
+    {"Earth": 1.0},
+    {"Mars": 2.52},
+    {"Jupiter": 5.2},
+    {"Pluto": 40.5}
+]
+
+# 1AU = 149600000km
+CONSTANT_KM_ONE_AU = 149600000
+
 operations = ['go', 'shoot', 'fuel', 'motor', 'exit']
 
-POSITION_INIT = 0
-AMMO_INIT = 20
-FUEL_INIT = 20
+POSITION_INIT = 1
+AMMO_INIT = 100
+FUEL_INIT = 100
 ENGIN_STATUS_INIT = True
 
 
 class Boat:
 
-    def __init__(self, curr_position, ammo, fuel, engin_status):
-        self.curr_position = destination_arr[curr_position]
+    def __init__(self, curr_position_index, ammo, fuel, engin_status):
+        self.curr_position_index = curr_position_index
         self.ammo = ammo
         self.fuel = fuel
         self.engin_status = engin_status
 
-    def set_destination(self, destination_id):
-        self.curr_position = destination_arr[destination_id]
+    def set_current_position(self, curr_position_index):
+        self.curr_position_index = curr_position_index
+
+    def set_destination(self, destination_index) -> dict[str, object]:
+        curr_to_sun = list(destinations_arr[self.curr_position_index].values())[0]
+
+        target = destinations_arr[destination_index]
+        target_to_sun = list(target.values())[0]
+
+        return {
+            "target": list(target.keys())[0],
+            "distance": abs(curr_to_sun - target_to_sun),
+        }
 
     def desc_fuel(self) -> int:
         self.fuel -= random.randint(1, 10)
@@ -53,14 +75,20 @@ if __name__ == '__main__':
         # go
         if operation_index == 0:
             if boat.get_engin_status():
-                for i, e in enumerate(destination_arr):
-                    print(f"{i} - {e}")
+
+                for i, destination in enumerate(destinations_arr):
+                    print(f"{i} -> {list(destination.keys())[0]}")
+
                 des_id = int(input("select your choice: "))
-                boat.set_destination(des_id)
+                xx = boat.set_destination(des_id)
+                print(xx)
                 curr_fuel = boat.desc_fuel()
-                print(f"space ship go to {destination_arr[des_id]}\n")
+
+
                 if boat.get_engin_status():
-                    print(f"space ship current fuel:{curr_fuel}")
+                    print(f"space ship current fuel:{curr_fuel}\n"
+                          f"already reached {xx['target']}")
+                    boat.set_current_position(des_id)
                 else:
                     print(f"space ship no fuel left, engine down!")
             else:
