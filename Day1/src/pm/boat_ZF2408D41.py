@@ -50,6 +50,7 @@ if __name__ == '__main__':
     while True:
         operation_index = int(input("enter your choice: "))
 
+        # go
         if operation_index == 0:
             if boat.get_engin_status():
                 for i, e in enumerate(destination_arr):
@@ -65,6 +66,7 @@ if __name__ == '__main__':
             else:
                 print("no fuel available")
 
+        # shoot
         elif operation_index == 1:
             shoot_count = int(input("input your shoot count: "))
             if shoot_count <= 0:
@@ -76,15 +78,21 @@ if __name__ == '__main__':
                     boat.shoot()
                 print(f"left ammo:{boat.ammo}")
 
+        # fuel
         elif operation_index == 2:
             print(f"space ship's fuel left:{boat.fuel}\n")
 
 
+        # motor
         elif operation_index == 3:
             if boat.get_engin_status():
                 print("space ship engin status OK!")
             else:
                 print("space ship no engin status Down!")
+
+        # exit
+        elif operation_index == 4:
+            exit(1)
 
         else:
             print("invalid operation")
