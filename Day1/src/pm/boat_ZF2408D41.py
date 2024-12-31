@@ -1,6 +1,6 @@
-# username and password
-from pandas.core.computation.engines import ENGINES
+import random
 
+# username and password
 CONSTANT_USERNAME = "admin"
 CONSTANT_PASSWORD = "root"
 
@@ -35,7 +35,7 @@ class Boat:
     def set_current_position(self, curr_position_index):
         self.curr_position_index = curr_position_index
 
-    def set_destination(self, destination_index) -> dict[str, object]:
+    def set_destination(self, destination_index) -> dict[str, float]:
         curr_to_sun = list(destinations_arr[self.curr_position_index].values())[0]
 
         target = destinations_arr[destination_index]
@@ -47,7 +47,7 @@ class Boat:
         }
 
     # return left fuel percent
-    def consume_fuel(self, index, distance) -> float:
+    def consume_fuel(self, index, distance: float) -> float:
         if distance > self.avi_distance:
             self.engin_status = False
             return -1
@@ -65,6 +65,7 @@ class Boat:
 
     def shoot(self):
         self.ammo -= 1
+        print("target destroyed!") if random.choice([True, False]) else print("miss...")
 
     def get_ammo(self) -> int:
         return self.ammo
@@ -127,13 +128,12 @@ if __name__ == '__main__':
         # shoot
         elif operation_index == 1:
             shoot_count = int(input("input your shoot count: "))
-            if shoot_count <= 0:
-                print("no ammo available")
-            elif shoot_count > boat.get_ammo():
+            if shoot_count <= 0 or shoot_count > boat.get_ammo():
                 print("no ammo available")
             else:
                 for i in range(shoot_count):
                     boat.shoot()
+
                 print(f"left ammo:{boat.ammo}")
 
         # fuel
