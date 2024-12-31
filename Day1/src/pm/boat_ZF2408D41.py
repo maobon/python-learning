@@ -1,4 +1,6 @@
 # username and password
+from pandas.core.computation.engines import ENGINES
+
 CONSTANT_USERNAME = "admin"
 CONSTANT_PASSWORD = "root"
 
@@ -19,7 +21,7 @@ operations = ['go', 'shoot', 'fuel', 'motor', 'exit']
 POSITION_INIT = 1
 AMMO_INIT = 100
 TOTAL_AVAILABLE_DISTANCE = 10_000_000_000
-ENGIN_STATUS_INIT = True
+ENGINE_STATUS_INIT = True
 
 
 class Boat:
@@ -94,7 +96,9 @@ def login():
 if __name__ == '__main__':
     login()
 
-    boat = Boat(POSITION_INIT, AMMO_INIT, TOTAL_AVAILABLE_DISTANCE, ENGIN_STATUS_INIT)
+    # create boat instance
+    boat = Boat(POSITION_INIT, AMMO_INIT, TOTAL_AVAILABLE_DISTANCE, ENGINE_STATUS_INIT)
+
     while True:
 
         print("Select your order\n")
@@ -106,25 +110,19 @@ if __name__ == '__main__':
         # go
         if operation_index == 0:
             if boat.get_engin_status():
-
                 for i, destination in enumerate(destinations_arr):
                     print(f"{i} -> {list(destination.keys())[0]}")
 
                 des_index = int(input("select your choice: "))
                 dis = boat.set_destination(des_index).get("distance")
 
-                xx = boat.consume_fuel(des_index, dis)
+                fuel_left = boat.consume_fuel(des_index, dis)
+                prompt_info = "left fuel not enough" if fuel_left < 0 else f"fuel left: {fuel_left:.2f} %"
+                print(prompt_info, end="\n")
 
-                print(f"fuel left: {xx:.2f} %")
-
-                # if boat.get_engin_status():
-                #     print(f"space ship current fuel:{curr_fuel}\n"
-                #           f"already reached {xx['target']}")
-                #     boat.set_current_position(des_id)
-                # else:
-                #     print(f"space ship no fuel left, engine down!")
+                print(f"{"Engine OK!\n" if boat.get_engin_status() else "Engine failure ...\n"}")
             else:
-                print("no fuel available")
+                print("no fuel available\n")
 
         # shoot
         elif operation_index == 1:
