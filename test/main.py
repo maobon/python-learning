@@ -1,10 +1,12 @@
 
-def test(height:int, width:int) -> int:
-    print(height)
-    #return height*width
-    return "erere"
+
 
 if __name__ == '__main__':
-    print("hello world")
-    xx = test(width=3, height=2)
-    print(xx)
+    print('hello world')
+
+    text = input("Please input something...")
+    if not text:
+        print("文本输入为空")
+    else:
+        print("文本输入不为空")
+
